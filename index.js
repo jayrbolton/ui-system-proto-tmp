@@ -1,27 +1,21 @@
 const EventEmitter = require('events')
 
-var exp = module.exports = {}
-
-exp.state = function state (initialData) {
+module.exports = function state (initialData) {
   var emitter = new EventEmitter()
   var state = initialData
-  state.on = function (name, cb) {
-    emitter.on(name, cb)
+  state.update = function update (data) {
+    for (var name in data) {
+      state[name] = data[name]
+      emitter.emit('update:' + name, data[name])
+    }
     return state
   }
-  state.emit = function (name, val) {
-    emitter.emit(name, val)
+  state.on = function on (prop, fn) {
+    if (state.hasOwnProperty(prop)) fn(state[prop])
+    emitter.on('update:' + prop, function (val) {
+      fn(val)
+    })
     return state
   }
   return state
 }
-
-exp.update = function update (state, data) {
-  for (var name in data) {
-    state[name] = data[name]
-    state.emit('update:' + name, null)
-  }
-  state.emit('update', null)
-  return state
-}
-

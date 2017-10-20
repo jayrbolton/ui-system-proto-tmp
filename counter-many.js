@@ -1,39 +1,38 @@
 const dom = require('./dom')
 const html = require('bel')
-const {state, update} = require('./index')
+const state = require('./index')
 
+var uid = 0
 function Counter (initial, id) {
-  return state({count: initial, id: id})
+  return state({count: initial, id: uid++})
 }
 
 var counterActions = {
   increment: function (c) {
-    update(c, {count: c.count + 1})
+    c.update({count: c.count + 1})
   }, 
   decrement: function (c) {
     if (c.count > 0) {
-      update(c, {count: c.count - 1})
+      c.update({count: c.count - 1})
     }
   },
   reset: function (c) {
-    update(c, {count: 0})
+    c.update({count: 0})
   }
 }
 
-var uid = 0
 
 function CounterList (initial=[]) {
-  initial = initial.map(i => Counter(i, uid++))
-  return state({counters: initial})
+  return state({counters: initial.map(Counter)})
 }
 
 var counterListActions = {
   append: function (initial, c) {
-    update(c, {counters: c.counters.concat([Counter(initial, uid++)])})
+    c.update({counters: c.counters.concat([Counter(initial)])})
   },
   remove: function (id, c) {
     const filtered = c.counters.filter(c => c.id !== id)
-    update(c, {counters: filtered})
+    c.update({counters: filtered})
   }
 }
 
@@ -44,7 +43,7 @@ function listView (counterList) {
 
   return html`
     <div>
-      <p> Bags of beans </p>
+      <p> Bags of beans let's go </p>
       ${appendBtn}
       ${counterElems}
     </div>
@@ -67,14 +66,28 @@ const counterViewWithRemove = counterList => (counter) => {
 function counterView (counter) {
   const action = name => ev => counterActions[name](counter)
   const btn = (name, text) => html`<button onclick=${action(name)}> ${text} </button>`
-  const countMsg = html`<p> Total beans: ${dom.text(counter, 'count')} </p>`
+
+  const spanCount = document.createElement('span')
+  counter.on('count', c => spanCount.textContent = c)
+  const countMsg = html`<p> Total beans: ${spanCount} </p>`
+
+  const incrBtn = btn('increment', 'add bean')
+  const decrBtn = btn('decrement', 'toss a bean')
+  const resetBtn = btn('reset', 'throw all beans in the garbage')
+
+  counter.on('count', function () {
+    decrBtn.disabled = resetBtn.disabled = counter.count === 0
+  })
+
+  const spanID = document.createElement('span')
+  counter.on('id', id => spanID.textContent = id)
 
   return html`
     <div>
-      <p> Bean counter </p>
-      ${btn('increment', 'add bean')}
-      ${btn('decrement', 'remove bean')}
-      ${btn('reset', 'reset beans')}
+      <p> Bean bag #${spanID} </p>
+      ${incrBtn}
+      ${decrBtn}
+      ${resetBtn}
       ${countMsg}
     </div>
   `

@@ -1,28 +1,17 @@
-
 var exp = module.exports = {}
-
-exp.text = function text (state, prop) {
-  var txt = document.createTextNode(String(state[prop]))
-  state.on('update:' + prop, function () {
-    txt.textContent = String(state[prop])
-  })
-  return txt
-}
 
 exp.map = function map (view, state, prop) {
   var inserted = {}
   var container = document.createElement('div')
-  update()
-  state.on('update:' + prop, function () {
-    update()
-  })
+  state.on(prop, function () { update() })
 
   function update () {
     var stateData = state[prop]
-    console.log('stateData', stateData)
     for (var i = 0; i < stateData.length; ++i) {
       var elem = stateData[i]
-      if (!elem.hasOwnProperty('id')) throw new TypeError ('Each object in the array must have an "id" property')
+      if (!elem.hasOwnProperty('id')) {
+        throw new TypeError('Each object in the array must have an "id" property')
+      }
       var existing = inserted[elem.id]
       if (existing) {
         if (container.children[i] !== existing) {
