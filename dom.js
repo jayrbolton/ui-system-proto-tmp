@@ -9,7 +9,7 @@ exp.text = function text (state, prop) {
   return txt
 }
 
-exp.children = function children (state, prop, view) {
+exp.map = function map (view, state, prop) {
   var inserted = {}
   var container = document.createElement('div')
   update()
@@ -19,6 +19,7 @@ exp.children = function children (state, prop, view) {
 
   function update () {
     var stateData = state[prop]
+    console.log('stateData', stateData)
     for (var i = 0; i < stateData.length; ++i) {
       var elem = stateData[i]
       if (!elem.hasOwnProperty('id')) throw new TypeError ('Each object in the array must have an "id" property')

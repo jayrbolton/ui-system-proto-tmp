@@ -1,6 +1,6 @@
-const dom = require('../dom')
+const dom = require('./dom')
+const {state, update} = require('./index')
 const html = require('bel')
-const {state, update} = require('../')
 
 function Counter (initial) {
   return state({count: initial})

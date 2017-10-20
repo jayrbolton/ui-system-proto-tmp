@@ -1,6 +1,6 @@
-const dom = require('../dom')
+const dom = require('./dom')
 const html = require('bel')
-const {state, update} = require('../')
+const {state, update} = require('./index')
 
 function Counter (initial, id) {
   return state({count: initial, id: id})
@@ -31,9 +31,9 @@ var counterListActions = {
   append: function (initial, c) {
     update(c, {counters: c.counters.concat([Counter(initial, uid++)])})
   },
-  remove: function (idx, c) {
-    c.counters.splice(idx, 1)
-    update(c, {counters: c.counters})
+  remove: function (id, c) {
+    const filtered = c.counters.filter(c => c.id !== id)
+    update(c, {counters: filtered})
   }
 }
 
@@ -51,8 +51,8 @@ function listView (counterList) {
   `
 }
 
-const counterViewWithRemove = counterList => (counter, idx) => {
-  const removeFn = ev => counterListActions.remove(idx, counterList)
+const counterViewWithRemove = counterList => (counter) => {
+  const removeFn = ev => counterListActions.remove(counter.id, counterList)
   const removeBtn = html`<button onclick=${removeFn}> Remove bag </button>`
   return html`
     <div>
