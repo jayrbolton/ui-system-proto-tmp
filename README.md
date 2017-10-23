@@ -3,9 +3,19 @@
 
 This is a UI system inspired by state automatas. This repo is a quick n dirty prototype for demo/discussion purposes.
 
-States are simple observable data containers that use node's EventEmitter
+States are simple observable data containers that use node's EventEmitter, with inspirations from FRP.
 
 States can be used to generate dynamic HTML (and svg and canvas) in a simpler (and possibly faster) way than virtual DOM.
+
+Examples: 
+* [todo MVC](/todo.js) (no styling)
+* 7guis ([info](https://github.com/eugenkiss/7guis/wiki))
+   * [counter](/7guis/counter.js)
+   * [temperature converter](/7guis/temperature-converter.js)
+   * [flight booker](/7guis/flight-booker.js)
+   * [timer](/7guis/timer.js)
+   * [crud](/7guis/crud.js)
+* [multiple dynamic counters](/counter-many.js)
 
 ## state(defaults)
 
@@ -42,6 +52,34 @@ Call the function `fn` each time the property `prop` gets updated in the state. 
 ```js
 bc.on('count', (c) => console.log('count updated to', c))
 ```
+
+## state.whenEqual(prop, val, fn)
+
+This is very similar to `on`, but only fires when `state[prop]` is strict-equal to `val`. This can make your code a bit more declarative, letting you reduce conditionals.
+
+## state.types(types)
+
+This allows you to set a bunch of run-time type checks. `types` is an object where each key corresponds to the keys in your state. Each value should be a string type name (as in `typeof prop === typename`).
+
+```js
+const counter = state({count: 0}).types({count: 'number'})
+counter.update({count: 1}) // ok
+counter.update({count: '1'}) // throws TypeError
+```
+
+You will likely only want to make run-time type checks like this while you are developing, and not in production. You can put the `.types` call inside a conditional which checks whether you are in the dev or production environment
+
+## state.constraints(tests)
+
+This is similar to `types`, but is more general: every key in `tests` corresponds to a key in your state. Every value in `tests` is a function that tests the value in state when it is updated. If the function returns false, a TypeError gets thrown.
+
+```js
+const counter = state({count: 0}).constraints({count: n => n > -1})
+counter.update({count: 1}) // ok
+counter.update({count: -1}) // throws TypeError
+```
+
+As with `.types`, you will probably only want this in your dev environment. Wrap the call to `.constraints` in a conditional that checks whether you are in the dev environment.
 
 # dom
 

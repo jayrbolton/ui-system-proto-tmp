@@ -34,9 +34,27 @@
 
 <p>This is a UI system inspired by state automatas. This repo is a quick n dirty prototype for demo/discussion purposes.</p>
 
-<p>States are simple observable data containers that use node's EventEmitter</p>
+<p>States are simple observable data containers that use node's EventEmitter, with inspirations from FRP.</p>
 
 <p>States can be used to generate dynamic HTML (and svg and canvas) in a simpler (and possibly faster) way than virtual DOM.</p>
+
+<p>Examples: </p>
+
+<ul>
+<li>
+<a href="/todo.js">todo MVC</a> (no styling)</li>
+<li>7guis (<a href="https://github.com/eugenkiss/7guis/wiki">info</a>)
+
+<ul>
+<li><a href="/7guis/counter.js">counter</a></li>
+<li><a href="/7guis/temperature-converter.js">temperature converter</a></li>
+<li><a href="/7guis/flight-booker.js">flight booker</a></li>
+<li><a href="/7guis/timer.js">timer</a></li>
+<li><a href="/7guis/crud.js">crud</a></li>
+</ul>
+</li>
+<li><a href="/counter-many.js">multiple dynamic counters</a></li>
+</ul>
 
 <h2>
 <a id="statedefaults" class="anchor" href="#statedefaults" aria-hidden="true"><span class="octicon octicon-link"></span></a>state(defaults)</h2>
@@ -73,6 +91,35 @@ bc.update({count: 2, hidden: true})
 
 <pre lang="js"><code>bc.on('count', (c) =&gt; console.log('count updated to', c))
 </code></pre>
+
+<h2>
+<a id="statewhenequalprop-val-fn" class="anchor" href="#statewhenequalprop-val-fn" aria-hidden="true"><span class="octicon octicon-link"></span></a>state.whenEqual(prop, val, fn)</h2>
+
+<p>This is very similar to <code>on</code>, but only fires when <code>state[prop]</code> is strict-equal to <code>val</code>. This can make your code a bit more declarative, letting you reduce conditionals.</p>
+
+<h2>
+<a id="statetypestypes" class="anchor" href="#statetypestypes" aria-hidden="true"><span class="octicon octicon-link"></span></a>state.types(types)</h2>
+
+<p>This allows you to set a bunch of run-time type checks. <code>types</code> is an object where each key corresponds to the keys in your state. Each value should be a string type name (as in <code>typeof prop === typename</code>).</p>
+
+<pre lang="js"><code>const counter = state({count: 0}).types({count: 'number'})
+counter.update({count: 1}) // ok
+counter.update({count: '1'}) // throws TypeError
+</code></pre>
+
+<p>You will likely only want to make run-time type checks like this while you are developing, and not in production. You can put the <code>.types</code> call inside a conditional which checks whether you are in the dev or production environment</p>
+
+<h2>
+<a id="stateconstraintstests" class="anchor" href="#stateconstraintstests" aria-hidden="true"><span class="octicon octicon-link"></span></a>state.constraints(tests)</h2>
+
+<p>This is similar to <code>types</code>, but is more general: every key in <code>tests</code> corresponds to a key in your state. Every value in <code>tests</code> is a function that tests the value in state when it is updated. If the function returns false, a TypeError gets thrown.</p>
+
+<pre lang="js"><code>const counter = state({count: 0}).constraints({count: n =&gt; n &gt; -1})
+counter.update({count: 1}) // ok
+counter.update({count: -1}) // throws TypeError
+</code></pre>
+
+<p>As with <code>.types</code>, you will probably only want this in your dev environment. Wrap the call to <code>.constraints</code> in a conditional that checks whether you are in the dev environment.</p>
 
 <h1>
 <a id="dom" class="anchor" href="#dom" aria-hidden="true"><span class="octicon octicon-link"></span></a>dom</h1>
