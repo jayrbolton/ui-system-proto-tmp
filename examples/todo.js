@@ -60,7 +60,7 @@ function view (list) {
     </form>
   `
 
-  const tasks = dom.map(taskView(list), list, 'tasks')
+  const tasks = dom.childSync(taskView(list), 'div', list, 'tasks')
 
   return html`
     <div>

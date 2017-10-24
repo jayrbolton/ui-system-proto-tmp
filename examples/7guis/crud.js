@@ -99,7 +99,7 @@ function view (people) {
   const updateBtn = html`<button type='button' onclick=${updatePerson(people)}> Update </button>`
   const deleteBtn = html`<button type='button' onclick=${deletePerson(people)}> Delete </button>`
 
-  const peopleDivs = dom.map(peopleDiv(people), people, 'arr')
+  const peopleDivs = dom.childSync(peopleDiv(people), 'div', people, 'arr')
 
   people.on('currentSearch', s => filterInput.value = s)
 

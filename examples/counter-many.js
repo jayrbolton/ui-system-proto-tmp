@@ -39,7 +39,7 @@ var counterListActions = {
 function listView (counterList) {
   const appendFn = ev => counterListActions.append(0, counterList)
   const appendBtn = html`<button onclick=${appendFn}> Add bean bag </button>`
-  const counterElems = dom.map(counterViewWithRemove(counterList), counterList, 'counters')
+  const counterElems = dom.childSync(counterViewWithRemove(counterList), 'div', counterList, 'counters')
 
   return html`
     <div>

@@ -1,9 +1,9 @@
 
 # ui system prototype
 
-This is a UI system inspired by state automatas. This repo is a quick n dirty prototype for demo/discussion purposes.
+This is a UI system inspired by state automatas and FRP streams. This repo is a quick n dirty prototype for demo/discussion purposes.
 
-States are simple observable data containers that use node's EventEmitter, with inspirations from FRP.
+States are simple observable data containers that use node's EventEmitter.
 
 States can be used to generate dynamic HTML (and svg and canvas) in a simpler (and possibly faster) way than virtual DOM.
 
@@ -110,7 +110,7 @@ You can create views by generating plain HTML elements. One way to make this eas
 
 For most needs, like element attributes, properties, style, classes, text content, you can simply use the `on` function to make changes to the html elements.
 
-The `dom` module also provides a `map` function that allows you to create dynamic child elements from a state that has an array of objects.
+The `dom` module also provides a `childSync` function that allows you to create dynamic child elements from a state that has an array of objects.
 
 Unlike with virtual dom libraries, the view functions only get called once on pageload. Instead of diffing and patching entire trees, we listen to changes on state properties and make changes to dom elements directly using the browser's built-in HTMLElement and DOM Node API
 
@@ -140,12 +140,12 @@ function view (beanCount) {
 }
 ```
 
-## dom.map(viewFn, state, prop)
+## dom.childSync(viewFn, containerTagname, state, prop)
 
 Create a dynamic set of child elements. `state[prop]` should be an array of objects, and each one of those objects must have an `id` property.
 
-This allows you to very efficiently append, remove, and reorder elements on the page without any extra re-rendering. All transient state, like checkboxes and input values, get preserved, even on reordering. This is all based on the `id` property in each object in your array.
+`childSync` has to create a container for all the child nodes to sync properly. `containerTagname` will be the node tagname of your container.
 
-## dom.route(state, routes)
+`viewFn` is a function that should take every element in `state[prop]` and return an html node.
 
-todo
+This function allows you to very efficiently append, remove, and reorder elements on the page without any extra re-rendering. All transient state, like checkboxes and input values, get preserved, even on reordering. This is all based on the `id` property in each object in your array.
