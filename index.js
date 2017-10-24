@@ -5,6 +5,9 @@ module.exports = function state (initialData) {
   var state = initialData
   state.update = function update (data) {
     for (var name in data) {
+      if (!state.hasOwnProperty(name))  {
+        throw new TypeError("Invalid property for state: " + name)
+      }
       state[name] = data[name]
       emitter.emit('update:' + name, data[name])
     }
@@ -28,29 +31,32 @@ module.exports = function state (initialData) {
     return state
   }
   state.constraints = function constraints (obj) {
+    const checkConstraint = (prop, val, fn) => {
+      if (!fn(val)) {
+        throw new TypeError("Invalid state value for " + prop + ": " + val + " .. Should pass the constraint: " + fn)
+      }
+    }
     for (let prop in obj) {
       emitter.on('update:' + prop, function (val) {
-        if (!obj[prop](val)) {
-          throw new TypeError("Invalid state value for " + prop + ": " + val + " .. Should pass: " + obj[prop])
-        }
+        checkConstraint(prop, val, obj[prop])
       })
+      checkConstraint(prop, state[prop], obj[prop])
     }
     return state
   }
   state.types = function types (obj) {
-    const checkType = (val, types) => {
+    const checkType = (prop, val, types) => {
+      if (!Array.isArray(types)) types = [types]
+      const valid = types.reduce((bool, t) => bool || (typeof val === t), false)
+      if (!valid) {
+        throw new TypeError("Invalid state value for " + prop + ": " + val + " .. Should have typeof: " + types)
+      }
     }
     for (let prop in obj) {
       emitter.on('update:' + prop, function (val) {
-        if (!Array.isArray(obj[prop])) obj[prop] = [obj[prop]]
-        let valid = false
-        obj[prop].forEach(type => {
-          if (typeof val === type) valid = true
-        })
-        if (!valid) {
-          throw new TypeError("Invalid state value for " + prop + ": " + val + " .. Should have typeof: " + obj[prop])
-        }
+        checkType(prop, val, obj[prop])
       })
+      checkType(prop, state[prop], obj[prop])
     }
     return state
   }

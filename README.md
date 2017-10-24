@@ -8,18 +8,18 @@ States are simple observable data containers that use node's EventEmitter, with 
 States can be used to generate dynamic HTML (and svg and canvas) in a simpler (and possibly faster) way than virtual DOM.
 
 Examples: 
-* [todo MVC](/todo.js) (no styling)
+* [todo MVC](/examples/todo.js) (no styling)
 * 7guis ([info](https://github.com/eugenkiss/7guis/wiki))
-   * [counter](/7guis/counter.js)
-   * [temperature converter](/7guis/temperature-converter.js)
-   * [flight booker](/7guis/flight-booker.js)
-   * [timer](/7guis/timer.js)
-   * [crud](/7guis/crud.js)
-* [multiple dynamic counters](/counter-many.js)
+   * [counter](/examples/7guis/counter.js)
+   * [temperature converter](/examples/7guis/temperature-converter.js)
+   * [flight booker](/examples/7guis/flight-booker.js)
+   * [timer](/examples/7guis/timer.js)
+   * [crud](/examples/7guis/crud.js)
+* [multiple dynamic counters](/examples/counter-many.js)
 
 ## state(defaults)
 
-This is exported in `./index.js`
+This is exported in `./index.js`.
 
 ```js
 const state = require('./index')
@@ -30,6 +30,15 @@ function BeanCount (initial) {
 
 A state is simply an object containing data, and will get an event emitter attached to it.
 
+State properties are strict, kind of like structs in other languages. If you try to update a property in the state that wasnt initialized when the state is first created, then a TypeError will get thrown. This is a bug prevention / code readability measure.
+
+```js
+const counter = state({count: 1})
+counter.update({id: 0}) // throws TypeError
+const counterWithID = state({count: 1, id: 0})
+counter.update({id: 99}) // ok
+```
+
 ## state.update(data)
 
 In order to update a state, use the `update` method.
@@ -39,9 +48,9 @@ In order to update a state, use the `update` method.
 `data` is an object that will get merged into the state. For every key/value, an `update:key` event will get emitted. When all is merged, then `update` gets emitted.
 
 ```js
-bc.update({count: 1})
-bc.update({id: 0})
-bc.update({count: 2, hidden: true})
+bc.update({count: 1, hidden: false})
+bc.update({count: 2})
+bc.update({count: 3, hidden: true})
 // etc
 ```
 
@@ -57,14 +66,26 @@ bc.on('count', (c) => console.log('count updated to', c))
 
 This is very similar to `on`, but only fires when `state[prop]` is strict-equal to `val`. This can make your code a bit more declarative, letting you reduce conditionals.
 
+```js
+item.whenEqual('error', true, () => {
+  div.classList.add('error')
+  errorMsg.classList.add('active')
+})
+item.whenEqual('error', false, () => {
+  div.classList.remove('error')
+  errorMsg.classList.remove('active')
+})
+```
+
 ## state.types(types)
 
 This allows you to set a bunch of run-time type checks. `types` is an object where each key corresponds to the keys in your state. Each value should be a string type name (as in `typeof prop === typename`).
 
 ```js
-const counter = state({count: 0}).types({count: 'number'})
+const counter = state({count: 0}).types({count: ['number', 'string']}) // count can be number OR string
 counter.update({count: 1}) // ok
-counter.update({count: '1'}) // throws TypeError
+counter.update({count: []}) // throws TypeError
+counter.update({count: '1'}) // ok
 ```
 
 You will likely only want to make run-time type checks like this while you are developing, and not in production. You can put the `.types` call inside a conditional which checks whether you are in the dev or production environment
@@ -88,6 +109,8 @@ You can create views by generating plain HTML elements. One way to make this eas
 For most needs, like element attributes, properties, style, classes, text content, you can simply use the `on` function to make changes to the html elements.
 
 The `dom` module also provides a `map` function that allows you to create dynamic child elements from a state that has an array of objects.
+
+Unlike with virtual dom libraries, the view functions only get called once on pageload. Instead of diffing and patching entire trees, we listen to changes on states and make direct changes to dom elements using the built-in HTMLElement and Node api.
 
 ```
 const html = require('bel')
@@ -114,12 +137,6 @@ function view (beanCount) {
   `
 }
 ```
-
-See a larger example with multiple dynamic counters here: [/counter-many.js](/counter-many.js).
-
-Another larger example: [todomvc](/todo.js)
-
-Unlike with virtual dom libraries, the view functions only get called once on pageload.
 
 ## dom.map(viewFn, state, prop)
 

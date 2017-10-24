@@ -1,6 +1,6 @@
-const dom = require('./dom')
+const dom = require('../dom')
 const html = require('bel')
-const state = require('./index')
+const state = require('../index')
 
 var uid = 0
 function Counter (initial, id) {

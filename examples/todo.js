@@ -1,6 +1,6 @@
 'use strict'
-const state = require('./index')
-const dom = require('./dom')
+const state = require('../index')
+const dom = require('../dom')
 const html = require('bel')
 
 var uid = 0

@@ -1,6 +1,6 @@
-const state = require('../index')
+const state = require('../../index')
 const html = require('bel')
-const dom = require('../dom')
+const dom = require('../../dom')
 
 window.state = state
 

@@ -36,3 +36,25 @@ exp.map = function map (view, state, prop) {
   }
   return container
 }
+
+//
+//  const app = state({page: 'login'})
+//  app.on('page', p => setURL)
+//  state
+//
+// const router = dom.route({
+//   '/login': loginView,
+//   '/dashboard': dashboardView
+// })
+// router.go('/login')
+// router.dom // -> loginView elm
+//
+// app.whenEqual('login', true, t => {
+//   div.appendChild(login)
+// })
+// app.whenEqual('login', false, t => {
+//   div.removeChild(login)
+// })
+//
+exp.route = function route (routes) {
+}

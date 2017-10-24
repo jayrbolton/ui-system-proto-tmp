@@ -1,5 +1,5 @@
-const state = require('../index')
-const dom = require('../dom')
+const state = require('../../index')
+const dom = require('../../dom')
 const html = require('bel')
 
 const toCelsius = f => Math.round((f - 32) * (5/9))
