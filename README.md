@@ -112,7 +112,7 @@ For most needs, like element attributes, properties, style, classes, text conten
 
 The `dom` module also provides a `map` function that allows you to create dynamic child elements from a state that has an array of objects.
 
-Unlike with virtual dom libraries, the view functions only get called once on pageload. Instead of diffing and patching entire trees, we listen to changes on states and make direct changes to dom elements directly using the built-in HTMLElement and Node api (MDN is a good resource for this).
+Unlike with virtual dom libraries, the view functions only get called once on pageload. Instead of diffing and patching entire trees, we listen to changes on state properties and make changes to dom elements directly using the browser's built-in HTMLElement and DOM Node API
 
 ```
 const html = require('bel')
