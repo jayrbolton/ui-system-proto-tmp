@@ -11,6 +11,7 @@ Examples:
    * [flight booker](/examples/7guis/flight-booker.js)
    * [timer](/examples/7guis/timer.js)
    * [crud](/examples/7guis/crud.js)
+   * [circle-drawer](/examples/7guis/circles.js)
    * [cells](/examples/7guis/cells.js)
 * [multiple dynamic counters](/examples/counter-many.js)
 
