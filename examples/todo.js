@@ -35,8 +35,8 @@ function remove (task, list) {
   })
 }
 
-// complete a task
-function complete (task, list) {
+// complete or uncomplete a task
+function toggleComplete (task, list) {
   list.update({remaining: task.completed ? list.remaining + 1 : list.remaining - 1})
   task.update({completed: !task.completed})
 }
@@ -80,8 +80,6 @@ const remainingView = list => {
 
   list.on('remaining', rem => {
     span.textContent = rem
-  })
-  list.on('remaining', rem => {
     remaining.style.display = (rem === 0) ? 'none' : 'block'
   })
 
@@ -111,7 +109,7 @@ const filters = list => {
 
 const taskView = list => task => {
   const checkbox = html`
-    <input type='checkbox' onchange=${ev => complete(task, list)}>
+    <input type='checkbox' onchange=${ev => toggleComplete(task, list)}>
   `
   const removeBtn = html`
     <button onclick=${ev => remove(task, list)}>
