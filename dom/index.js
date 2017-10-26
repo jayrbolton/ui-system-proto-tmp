@@ -1,8 +1,9 @@
+var state = require('../')
+var html = require('bel')
 var exp = module.exports = {}
 
-exp.childSync = function childSync (view, containerName, state, prop) {
+exp.childSync = function childSync (view, container, state, prop) {
   var inserted = {}
-  var container = document.createElement(containerName)
   state.on(prop, function () { update() })
 
   function update () {
@@ -14,13 +15,17 @@ exp.childSync = function childSync (view, containerName, state, prop) {
       }
       var existing = inserted[elem.id]
       if (existing) {
-        if (container.children[i] !== existing) {
-          container.insertBefore(existing, container.children[i])
+        if (container.children[i] !== existing.dom) {
+          container.insertBefore(existing.dom, container.children[i])
         }
       } else {
+        var handlers = []
+        window.__uzu_onBind = function (emitter, state, handler) {
+          handlers.push([emitter, state, handler])
+        }
         var newNode = view(elem, i)
         newNode.dataset['uzu_child_id'] = elem.id
-        inserted[elem.id] = newNode
+        inserted[elem.id] = {dom: newNode, handlers: handlers}
         if (container.children[i]) {
           container.insertBefore(newNode, children[i])
         } else {
@@ -30,6 +35,12 @@ exp.childSync = function childSync (view, containerName, state, prop) {
     }
     for (var i = stateData.length; i < container.children.length; ++i) {
       var id = container.children[i].dataset['uzu_child_id']
+      inserted[id].handlers.forEach(handler => {
+        var emitter = handler[0]
+        var eventName = handler[1]
+        var fn = handler[2]
+        emitter.removeListener(eventName, fn)
+      })
       delete inserted[id]
       container.removeChild(container.children[i])
     }

@@ -178,11 +178,14 @@ function cellView (cell, sheet) {
   const output = html`<span class='output' ondblclick=${doubleClick}></span>`
 
   cell.on('output', val => output.innerHTML = val || '&nbsp;')
-  cell.whenEqual('error', true, () => {
-    output.classList.add('error')
-    output.textContent = 'error'
+  cell.on('error', err => {
+    if (err) {
+      output.classList.add('error')
+      output.textContent = 'error'
+    } else {
+      output.classList.remove('error')
+    }
   })
-  cell.whenEqual('error', false, () => output.classList.remove('error'))
 
   toggleHide.on('hidden', hideInput => {
     input.style.display = hideInput ? 'none' : 'block'

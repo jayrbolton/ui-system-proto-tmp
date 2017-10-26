@@ -11,11 +11,6 @@ function Person (last, first) {
     first,
     hidden: false,
     id: uid++
-  }).types({
-    last: 'string',
-    first: 'string',
-    hidden: 'boolean',
-    id: 'number'
   })
 }
 
@@ -33,11 +28,6 @@ function People (defaults) {
     arr: defaults,
     selected: null,
     currentSearch: ''
-  }).types({
-    currentSearch: 'string'
-  }).constraints({
-    arr: a => a.reduce((bool, p) => p.last && p.first && (p.id > -1) && bool, true),
-    selected: s => s === null || typeof s === 'number'
   })
 }
 
@@ -99,7 +89,7 @@ function view (people) {
   const updateBtn = html`<button type='button' onclick=${updatePerson(people)}> Update </button>`
   const deleteBtn = html`<button type='button' onclick=${deletePerson(people)}> Delete </button>`
 
-  const peopleDivs = dom.childSync(peopleDiv(people), 'div', people, 'arr')
+  const peopleDivs = dom.childSync(peopleDiv(people), document.createElement('div'), people, 'arr')
 
   people.on('currentSearch', s => filterInput.value = s)
 
@@ -143,8 +133,9 @@ const peopleDiv = people => person => {
   const select = ev => people.update({selected: people.selected === person.id ? null : person.id})
   const div = html`<div onclick=${select}> ${nameSpan} </div>`
   div.style.cursor = 'pointer'
-  person.whenEqual('hidden', true,  () => div.style.display = 'none')
-  person.whenEqual('hidden', false, () => div.style.display = 'block')
+  person.on('hidden', h => {
+    div.style.display = h ? 'none' : 'block'
+  })
   people.on('selected', id => {
     div.style.backgroundColor = (id === person.id) ? 'gray' : 'transparent'
   })

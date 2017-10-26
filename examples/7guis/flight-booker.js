@@ -25,36 +25,32 @@ const changeWay = flight => ev => flight.update({
 })
 
 function view (flight) {
+  // Inputs
   const startInput = dateInput(keyupDate(flight, 'startErr'), '12.12.2020')
   const returnInput = dateInput(keyupDate(flight, 'returnErr'), '')
   const bookBtn = html`<button onclick=${ev => flight.update({booked: true})}> Book </button>`
+  
+  // Dynamic elements
   const successMsg = html`<p>Booked!</p>`
   const gray = '#efefef'
 
-  flight.whenEqual('way', 'one-way', () => {
-    returnInput.disabled = true
-    returnInput.style.borderColor = gray
-    flight.update({returnErr: false})
+  // Dynamic behavior
+  flight.on('way', w => {
+    returnInput.disabled = w === 'one-way'
+    if (w === 'one-way') {
+      returnInput.style.borderColor = gray
+      flight.update({returnErr: false})
+    } else {
+      flight.update({returnErr: checkDateFormat(returnInput.value)})
+    }
   })
-  flight.whenEqual('way', 'round-trip', () => {
-    returnInput.disabled = false
-    flight.update({returnErr: checkDateFormat(returnInput.value)})
+  flight.on('startErr', err => {
+    startInput.style.borderColor = err ? 'red' : gray
+    bookBtn.disabled = err
   })
-  flight.whenEqual('startErr', true, () => {
-    startInput.style.borderColor = 'red'
-    bookBtn.disabled = true
-  })
-  flight.whenEqual('startErr', false, () => {
-    startInput.style.borderColor = gray
-    bookBtn.disabled = false
-  })
-  flight.whenEqual('returnErr', true, () => {
-    returnInput.style.borderColor = 'red'
-    bookBtn.disabled = true
-  })
-  flight.whenEqual('returnErr', false, () => {
-    returnInput.style.borderColor = gray
-    bookBtn.disabled = false
+  flight.on('returnErr', err => {
+    returnInput.style.borderColor = err ? 'red' : gray
+    bookBtn.disabled = err
   })
   flight.on('booked', b => {
     successMsg.style.display = b ? 'block' : 'none'
