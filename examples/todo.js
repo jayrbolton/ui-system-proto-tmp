@@ -9,7 +9,7 @@ function Task (name) {
 }
 
 function List () {
-  return state({tasks: [], visible: [], remaining: 0})
+  return state({tasks: [], remaining: 0})
 }
 
 // append a new task to a List after a form submit
