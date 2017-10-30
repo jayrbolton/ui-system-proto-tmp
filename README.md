@@ -3,7 +3,7 @@
 
 This is an ultra minimalistic UI system inspired by state automatas and streams. This repo is a quick n dirty prototype for demo/discussion purposes. States are simple observable data containers that use node's EventEmitter. They can be used to generate dynamic HTML (and svg and canvas) in a simpler (and possibly faster) way than virtual DOM.
 
-Examples: 
+Examples:
 * [todo MVC](/examples/todo.js) (no styling)
 * 7guis ([info](https://github.com/eugenkiss/7guis/wiki))
    * [counter](/examples/7guis/counter.js)
@@ -34,19 +34,22 @@ State properties are strict, kind of like structs in other languages. If you try
 const counter = state({count: 1})
 counter.update({id: 0}) // throws TypeError
 const counterWithID = state({count: 1, id: 0})
-counter.update({id: 99}) // ok
+counterWithID.update({id: 99}) // ok
 ```
 
 ## state.update(data)
 
 In order to update a state, use the `update` method.
 
-`state` is an instance of some state object. 
+`state` is an instance of some state object.
 
 `data` is an object that will get merged into the state. For every key/value, an event will get emitted (see `on` below).
 
 ```js
-bc.update({count: 1, hidden: false})
+const bc = BeanCount(0)
+const data = {count: 1, hidden: false}
+
+bc.update(data)
 bc.update({count: 2})
 bc.update({count: 3, hidden: true})
 // etc
