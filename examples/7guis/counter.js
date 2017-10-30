@@ -7,7 +7,7 @@ function view () {
   const btn = html`<button onclick=${incr}> Count </button>`
 
   const countSpan = document.createElement('span')
-  counter.on('count', c => countSpan.textContent = c)
+  counter.on('count', c => { countSpan.textContent = c })
 
   return html`
     <div>

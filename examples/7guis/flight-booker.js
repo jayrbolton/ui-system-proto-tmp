@@ -1,5 +1,4 @@
 const state = require('../../index')
-const dom = require('../../dom')
 const html = require('bel')
 
 function Flight () {
@@ -29,7 +28,7 @@ function view (flight) {
   const startInput = dateInput(keyupDate(flight, 'startErr'), '12.12.2020')
   const returnInput = dateInput(keyupDate(flight, 'returnErr'), '')
   const bookBtn = html`<button onclick=${ev => flight.update({booked: true})}> Book </button>`
-  
+
   // Dynamic elements
   const successMsg = html`<p>Booked!</p>`
   const gray = '#efefef'

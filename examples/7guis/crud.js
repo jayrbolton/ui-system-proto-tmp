@@ -80,7 +80,7 @@ const deletePerson = people => ev => {
 }
 
 function view (people) {
-  //inputs
+  // inputs
   const filterInput = html`<input onkeyup=${filterPeopleFromEvent(people)} type='text'>`
   const firstNameInput = html`<input type='text' name='first'>`
   const lastNameInput = html`<input type='text' name='last'>`
@@ -91,7 +91,7 @@ function view (people) {
 
   const peopleDivs = dom.childSync(peopleDiv(people), document.createElement('div'), people, 'arr')
 
-  people.on('currentSearch', s => filterInput.value = s)
+  people.on('currentSearch', s => { filterInput.value = s })
 
   people.on('selected', id => {
     if (id !== null) {
@@ -144,4 +144,3 @@ const peopleDiv = people => person => {
 
 const ppl = People([Person('Emil', 'Hans'), Person('Mustermann', 'Max'), Person('Tisch', 'Roman')])
 document.body.appendChild(view(ppl))
-

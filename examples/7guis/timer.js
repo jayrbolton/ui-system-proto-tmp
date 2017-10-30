@@ -43,7 +43,7 @@ function view (timer) {
   const progress = html`<div class='progress'><div class='progress-bar'></div></div>`
   const secondsSpan = html`<span>0.0s</span>`
 
-  timer.on('elapsedMs', s => secondsSpan.textContent = (s / 1000).toFixed(1) + 's')
+  timer.on('elapsedMs', s => { secondsSpan.textContent = (s / 1000).toFixed(1) + 's' })
   timer.on('elapsedMs', s => {
     const perc = Math.round(timer.elapsedMs * 100 / timer.duration)
     if (perc <= 100) {

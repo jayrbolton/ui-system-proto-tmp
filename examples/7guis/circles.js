@@ -106,12 +106,12 @@ function view (collection) {
 
   // inputs
   const slider = html`<input type='range' min=10 max=200 value=${collection.diameter} onchange=${setDiameter(collection)}>`
-  collection.on('diameter', d => slider.value = d)
+  collection.on('diameter', d => { slider.value = d })
   const undoBtn = html`<button onclick=${undo(collection)}> Undo </button>`
   const redoBtn = html`<button onclick=${redo(collection)}> Redo </button>`
   const history = collection.history
-  history.on('undoStack', b => {undoBtn.disabled = !b.length})
-  history.on('redoStack', f => {redoBtn.disabled = !f.length})
+  history.on('undoStack', b => { undoBtn.disabled = !b.length })
+  history.on('redoStack', f => { redoBtn.disabled = !f.length })
 
   return html`
     <div style='text-align: center'>
@@ -154,4 +154,3 @@ const circleView = collection => circle => {
 }
 
 document.body.appendChild(view(CircleCollection()))
-

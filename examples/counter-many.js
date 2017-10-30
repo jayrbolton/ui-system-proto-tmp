@@ -10,7 +10,7 @@ function Counter (initial, id) {
 var counterActions = {
   increment: function (c) {
     c.update({count: c.count + 1})
-  }, 
+  },
   decrement: function (c) {
     if (c.count > 0) {
       c.update({count: c.count - 1})
@@ -21,8 +21,7 @@ var counterActions = {
   }
 }
 
-
-function CounterList (initial=[]) {
+function CounterList (initial = []) {
   return state({counters: initial.map(Counter)})
 }
 
@@ -68,7 +67,7 @@ function counterView (counter) {
   const btn = (name, text) => html`<button onclick=${action(name)}> ${text} </button>`
 
   const spanCount = document.createElement('span')
-  counter.on('count', c => spanCount.textContent = c)
+  counter.on('count', c => { spanCount.textContent = c })
   const countMsg = html`<p> Total beans: ${spanCount} </p>`
 
   const incrBtn = btn('increment', 'add bean')
@@ -80,7 +79,7 @@ function counterView (counter) {
   })
 
   const spanID = document.createElement('span')
-  counter.on('id', id => spanID.textContent = id)
+  counter.on('id', id => { spanID.textContent = id })
 
   return html`
     <div>
@@ -93,4 +92,4 @@ function counterView (counter) {
   `
 }
 
-document.body.appendChild(listView(CounterList([0,1,2])))
+document.body.appendChild(listView(CounterList([0, 1, 2])))

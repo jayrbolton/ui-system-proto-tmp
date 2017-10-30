@@ -1,8 +1,6 @@
 const state = require('../../index')
 const html = require('bel')
-const dom = require('../../dom')
 
-var uid = 0
 function Cell (name) {
   return state({
     name,
@@ -15,10 +13,10 @@ function Cell (name) {
 }
 
 const opFunctions = {
-  '+': (x,y) => x + y,
-  '-': (x,y) => x - y,
-  '*': (x,y) => x * y,
-  '/': (x,y) => x / y,
+  '+': (x, y) => x + y,
+  '-': (x, y) => x - y,
+  '*': (x, y) => x * y,
+  '/': (x, y) => x / y
 }
 
 // set a cell to have an error state: no output, no deps, etc
@@ -39,10 +37,10 @@ function setInput (val, cell, sheet) {
   }
 
   // Split the input by a possible operator -- will have length one if 'TERM' or length three if 'TERM OP TERM'
-  const tokens = val.split(/([-+\/*])/).map(val => val.trim())
+  const tokens = val.split(/([-+/*])/).map(val => val.trim())
   // Save a reference the cell's current dependents for later
   const oldDeps = cell.deps
-  
+
   if (tokens.length === 1) {
     // Single term
     if (!validTerm(tokens[0])) {
@@ -94,11 +92,6 @@ function setInput (val, cell, sheet) {
   })
 }
 
-function applyFormula (cellObj, cell) {
-  const result = cell.formulaFn(cellObj)
-  cell.update({output: result})
-}
-
 const alphabet = 'abcdefghijklmnopqrstupvwxjz'.toUpperCase().split('') // lol
 
 function Sheet () {
@@ -129,7 +122,7 @@ function view (sheet) {
   const ths = alphabet.map((char, i) => html`<td>${char}</td>`)
   const rows = sheet.rows.map((row, idx) => {
     // prepend the row name to the full list of cell views
-    cols = row.map(cell => html`<td> ${cellView(cell, sheet)} </td`)
+    const cols = row.map(cell => html`<td> ${cellView(cell, sheet)} </td`)
     return html`<tr> <td>${idx + 1}</td> ${cols} </tr>`
   })
 
@@ -177,7 +170,7 @@ function cellView (cell, sheet) {
   const input = html`<input type='text' onchange=${changeInput} onblur=${changeInput}>`
   const output = html`<span class='output' ondblclick=${doubleClick}></span>`
 
-  cell.on('output', val => output.innerHTML = val || '&nbsp;')
+  cell.on('output', val => { output.innerHTML = val || '&nbsp;' })
   cell.on('error', err => {
     if (err) {
       output.classList.add('error')

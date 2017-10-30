@@ -117,7 +117,7 @@ const taskView = list => task => {
     </button>
   `
   const name = document.createElement('span')
-  task.on('name', n => name.textContent = n)
+  task.on('name', n => { name.textContent = n })
   task.on('completed', isCompleted => {
     name.style.textDecoration = isCompleted ? 'line-through' : 'none'
   })

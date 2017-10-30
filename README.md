@@ -109,10 +109,38 @@ This function allows you to very efficiently append, remove, and reorder element
 `childSync` will also keep track of exactly what event listeners you create for every child view, for any state at all. If the child node gets removed, all event listeners that were created inside the view (with calls to `state.on`) will also get removed.
 
 
+## dom.route(state, prop, container, routes)
+
+Swap out different views based on a state property. When a view is not visible, all its event listeners are removed and its dom tree is not in memory.
+
+`state[prop]` should be a string reprenting a current page/tab/etc.
+
+`container` can be any dom element that you want to use to contain your different views
+
+`routes` should be an object where each key is a string and each value is a function that returns a DOM node.
+
+```
+const tabState = state({page: 'a'})
+const tabs = dom.route(tabState, 'page', 'div', {
+  a: viewA,
+  b: viewB,
+  c: viewC
+})
+// tabs is a div element that will have either viewA, viewB, or viewB as its firstChild depending on tabState.page
+```
+
 # Undo and redo
 
 [See here for an undo-redo helper module](/undo-redo)
 
+# Debug logging
+
+Set the following in your browser console to enable some debugging messages:
+* `localStorage.debug = "uzu:*"` to show all debugging messages
+* `localStorage.debug = "uzu:state"` to show state-related messages
+* `localStorage.debug = "uzu:dom"` to show dom-related messages
+
 # Design patterns
 
 todo
+
