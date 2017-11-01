@@ -88,7 +88,7 @@ function increment (c) {
 
 function view (beanCount) {
   const countSpan = document.createElement('span')
-  beanCount.on('count', c => span.textContent = c)
+  beanCount.on('count', c => { span.textContent = c })
 
   return html`
     <div>
@@ -169,7 +169,7 @@ Uzu is designed with different layers of modularity in mind.
 Data constructors and functions over data can live in their own files and their own modules and can be reused for different views. The principles are:
 * State and domain logic can be decoupled from views -- the same set of state functions can be represented by a bunch of different views
 * The same type of state object could be constructed in many different ways by many functions --- we are not bound to a single constructor function
-* The same logic function can take different types of state objects, as long as they have some of the same attributes
+* The same logic function can take different types of state objects, as long as the states have common attributes.
 
 ### Views
 
@@ -177,17 +177,17 @@ A typical view takes state objects as parameters and returns an HTMLElement. Vie
 
 #### Mixin views
 
-Often, the user of a view function wants to tweak a bunch of nested markup when they use a component. Instead of having your component construct all the markup itself, it can be easier to have the user create all the markup themselves, while the view function takes the markup as a parameter and uses special `data-bind` attributes to add in functionality.
+Often, the user of a view function wants to tweak a bunch of nested markup when they use a component. Instead of having your view construct any markup, it can be easier to have the user create all the markup themselves, while the view function takes the markup as a parameter and uses `data-*` attributes to add in functionality.
 
-As long as the source markup has the right `data-bind` attributes, the user can change up their markup however they want.
+As long as the source markup has the right `data-*` attributes, the user can change up their markup however they want.
 
 ```js
 // Here, "elem" is a user-supplied element that we are adding counter functionality into
 function counterView (elem, startCount) {
   const counter = state({count: 1})
   const incrBtn = elem.querySelector('[data-bind="increment"]')
-  incrBtn.addEventListener('click', () => counter.update({count: counter.count + 1}))
   const countTxt = elem.querySelector('[data-bind="count"]')
+  incrBtn.addEventListener('click', () => counter.update({count: counter.count + 1}))
   counter.on('count', { c => countTxt.textContent = c })
   return elem
 }
