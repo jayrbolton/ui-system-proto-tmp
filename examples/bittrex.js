@@ -16,9 +16,7 @@ const apiAttrs = responseHeaders.map(concatWord)
 
 const headerView = (value) => html`<th>${value}</th>`
 const rowView = (row, bd) =>
-  html`<tr>${apiAttrs.map(key =>
-    html`<td>${row[key]}</td>`
-  )}</tr>`
+  html`<tr>${apiAttrs.map(key => html`<td>${row[key]}</td>`)}</tr>`
 
 const view = (bd) => {
   apiCall().then(data =>
@@ -27,12 +25,12 @@ const view = (bd) => {
     )
   ).then(cleanData => bd.update({bitMarkets: cleanData}))
 
-  const rows = dom.childSync(
-    (row) => rowView(row, bd),
-    document.createElement('tbody'),
-    bd,
-    'bitMarkets',
-  )
+  const rows = dom.childSync({
+    view: rowView,
+    container: 'tbody',
+    state: bd,
+    prop: 'bitMarkets'
+  })
 
   return html`
     <table>
