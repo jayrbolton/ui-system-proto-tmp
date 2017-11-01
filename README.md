@@ -175,6 +175,8 @@ Data constructors and functions over data can live in their own files and their 
 
 A typical view takes state objects as parameters and returns an HTMLElement. Views can also initialize new state objects, pass them down to other views, or even return any extra data along with the DOM nodes. This way, state can easily bubble up and down through your tree of view functions.
 
+View functions can use any library they want to generate plain [HTMLElements](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement). `bel` is a good option, but any other library that generates DOM nodes would also work just fine!
+
 #### Mixin views
 
 Often, the user of a view function wants to tweak a bunch of nested markup when they use a component. Instead of having your view construct any markup, it can be easier to have the user create all the markup themselves, while the view function takes the markup as a parameter and uses `data-*` attributes to add in functionality.
