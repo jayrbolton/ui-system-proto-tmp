@@ -50,7 +50,7 @@ const view = () => {
 
   const table = html`
     <table>
-      <thead> <th> Title </th> <th> Snippet </th> </thead>
+      <thead> <th> Results </th> </thead>
       ${rows}
     </table>
   `
