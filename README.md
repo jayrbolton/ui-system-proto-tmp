@@ -14,6 +14,7 @@ Examples:
    * [circle-drawer](/examples/7guis/circles.js)
    * [cells](/examples/7guis/cells.js)
 * [multiple dynamic counters](/examples/counter-many.js)
+* [wikipedia search](/examples/wiki-search.js)
 
 ## state(defaults)
 
@@ -99,37 +100,51 @@ function view (beanCount) {
 }
 ```
 
-## dom.childSync(viewFn, container, state, prop)
+## dom.childSync(options)
 
-Create a dynamic set of child elements. `state[prop]` should be an array of objects, and each one of those objects must have an `id` property.
+Create a dynamic set of child elements. The `options` argument should be an object with these properties:
+* `state`: state object
+* `prop`: string property name in the state
+* `view`: view function that takes `state[prop]` and returns an HTMLElement
+* `container`: string tagname or HTMLElement that wraps all the child elements
 
-`container` should be an empty html or svg node that you want to append all the children into.
+`state[prop]` should be an array of objects, and each one of those objects must have an `id` property.
 
-`viewFn` is a function that should take elements from `state[prop]` and return an html node.
+`container` should be a tagname or an empty html/svg node that you want to append all the children into.
 
-This function allows you to very efficiently append, remove, and reorder elements on the page without any extra re-rendering. All transient state, like checkboxes and input values, get preserved, even on reordering. This is all based on the `id` property in each object in your array.
+This function allows you to very efficiently append, remove, and reorder dynamic elements on the page. All transient state, like checkboxes and input values, get preserved, even on reordering. This is all based on the `id` property in each object in your array.
 
 `childSync` will also keep track of exactly what event listeners you create for every child view, for any state at all. If the child node gets removed, all event listeners that were created inside the view (with calls to `state.on`) will also get removed.
 
-
-## dom.route(state, prop, container, routes)
+## dom.route(options)
 
 Swap out different views based on a state property. When a view is not visible, all its event listeners are removed and its dom tree is not in memory.
+
+The `options` argument should be an object with these properties:
+* `state`: state object
+* `prop`: string property name in the state
+* `routes`: object where each key is a possible value of `state[prop]`, and each value is a view function that returns an HTMLElement
+* `container`: string tagname or HTMLElement that wraps all the child elements
 
 `state[prop]` should be a string reprenting a current page/tab/etc.
 
 `container` can be any dom element that you want to use to contain your different views
 
-`routes` should be an object where each key is a string and each value is a function that returns a DOM node.
+`routes` should be an object where each key is a string (eg. page name, tab name, etc) and each value is a function that returns a DOM node.
 
 ```
 const tabState = state({page: 'a'})
-const tabs = dom.route(tabState, 'page', 'div', {
-  a: viewA,
-  b: viewB,
-  c: viewC
+const tabs = dom.route({
+  state: tabState,
+  prop: 'page',
+  container: 'div',
+  routes: {
+    a: viewA,
+    b: viewB,
+    c: viewC
+  }
 })
-// tabs is a div element that will have either viewA, viewB, or viewB as its firstChild depending on tabState.page
+// `tabs` is a div element that will have either viewA, viewB, or viewB as its child node depending on tabState.page
 ```
 
 # Undo and redo
