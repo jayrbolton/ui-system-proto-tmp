@@ -60,7 +60,12 @@ function view (list) {
     </form>
   `
 
-  const tasks = dom.childSync(taskView(list), document.createElement('div'), list, 'tasks')
+  const tasks = dom.childSync({
+    view: taskView(list),
+    container: 'div',
+    state: list,
+    prop: 'tasks'
+  })
 
   return html`
     <div>

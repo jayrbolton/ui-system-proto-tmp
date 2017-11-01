@@ -38,7 +38,12 @@ var counterListActions = {
 function listView (counterList) {
   const appendFn = ev => counterListActions.append(0, counterList)
   const appendBtn = html`<button onclick=${appendFn}> Add bean bag </button>`
-  const counterElems = dom.childSync(counterViewWithRemove(counterList), 'div', counterList, 'counters')
+  const counterElems = dom.childSync({
+    state: counterList,
+    prop: 'counters',
+    container: 'div',
+    view: counterViewWithRemove(counterList)
+  })
 
   return html`
     <div>
@@ -49,7 +54,7 @@ function listView (counterList) {
   `
 }
 
-const counterViewWithRemove = counterList => (counter) => {
+const counterViewWithRemove = counterList => counter => {
   const removeFn = ev => counterListActions.remove(counter.id, counterList)
   const removeBtn = html`<button onclick=${removeFn}> Remove bag </button>`
   return html`

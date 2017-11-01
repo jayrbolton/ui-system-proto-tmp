@@ -1,14 +1,22 @@
+var assert = require('assert')
 var debug = require('debug')('uzu:dom')
 var catchListeners = require('../lib/catch-listeners')
 
 module.exports = {}
 
-module.exports.childSync = function childSync (view, container, state, prop) {
-  state.on(prop, update)
+module.exports.childSync = function childSync (options) {
+  assert.strictEqual(typeof options.view, 'function', 'pass in a function for the .view property')
+  assert(options.container, 'pass in a .container property in options -- can be a string or HTMLElement')
+  assert.strictEqual(typeof options.state, 'object', 'pass in a state object in the .state property')
+  assert.strictEqual(typeof options.prop, 'string', 'pass in a property string in the .prop property')
 
+  if (typeof options.container === 'string') options.container = document.createElement(options.container)
+  var container = options.container
   var inserted = {} // track already-inserted dom nodes based on object id
+  options.state.on(options.prop, update)
+
   function update () {
-    var arr = state[prop]
+    var arr = options.state[options.prop]
     debug('updating dynamic children for dom.childSync: ' + arr)
     for (var i = 0; i < arr.length; ++i) {
       var elem = arr[i]
@@ -24,7 +32,7 @@ module.exports.childSync = function childSync (view, container, state, prop) {
       } else {
         var newNode
         var listeners = catchListeners(function () {
-          newNode = view(elem, i)
+          newNode = options.view(elem, i)
         })
         newNode.dataset['uzu_child_id'] = elem.id
         inserted[elem.id] = {dom: newNode, listeners: listeners}
@@ -52,12 +60,17 @@ module.exports.childSync = function childSync (view, container, state, prop) {
   return container
 }
 
-module.exports.route = function route (state, prop, container, routes) {
-  if (typeof container === 'string') container = document.createElement(container)
+module.exports.route = function route (options) {
+  assert.strictEqual(typeof options.state, 'object', 'pass in a state in the .state property')
+  assert.strictEqual(typeof options.prop, 'string', 'pass in a property string in the .prop property')
+  assert(options.container, 'pass in a .container property in options -- can be a string or HTMLElement')
+  assert(typeof options.routes, 'object', 'pass in a routes object in the .routes property')
+
   debug('calling dom.route')
+  if (typeof options.container === 'string') options.container = document.createElement(options.container)
   var listeners = []
   var prevPage = null
-  state.on(prop, function (p) {
+  options.state.on(options.prop, function (p) {
     if (p === prevPage) return
     prevPage = p
     listeners.forEach(function (listener) {
@@ -66,11 +79,11 @@ module.exports.route = function route (state, prop, container, routes) {
     })
     var child
     listeners = catchListeners(function () {
-      child = routes[p]()
+      child = options.routes[p]()
     })
     debug('appending new child for dom.route: ' + child)
-    if (container.firstChild) container.removeChild(container.firstChild)
-    container.appendChild(child)
+    if (options.container.firstChild) options.container.removeChild(options.container.firstChild)
+    options.container.appendChild(child)
   })
-  return container
+  return options.container
 }

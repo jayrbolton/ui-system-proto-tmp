@@ -6,10 +6,15 @@ const html = require('bel')
 
 function view () {
   const tabState = state({page: 'a'})
-  const tabs = dom.route(tabState, 'page', document.createElement('div'), {
-    a: viewA(tabState),
-    b: viewB(tabState),
-    c: viewC(tabState)
+  const tabs = dom.route({
+    state: tabState,
+    prop: 'page',
+    container: 'div',
+    routes: {
+      a: viewA(tabState),
+      b: viewB(tabState),
+      c: viewC(tabState)
+    }
   })
 
   return html`

@@ -101,7 +101,12 @@ const redo = collection => () => undoRedo.redo(collection.history)
 function view (collection) {
   // svg and circle elements
   const g = html`<g stroke-width='1' stroke='black' fill='white'></g>`
-  const circles = dom.childSync(circleView(collection), g, collection, 'circles')
+  const circles = dom.childSync({
+    view: circleView(collection),
+    container: g,
+    state: collection,
+    prop: 'circles'
+  })
   const svg = html`<svg onclick=${createOrSelect(collection)}> ${circles} </svg>`
 
   // inputs
