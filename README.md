@@ -142,5 +142,68 @@ Set the following in your browser console to enable some debugging messages:
 
 # Design patterns
 
-todo
+## Modularity
+
+Uzu is designed with different layers of modularity in mind.
+
+### Data & domain logic
+
+Data constructors and functions over data can live in their own files and their own modules and can be reused for different views. The principles are:
+* State and domain logic can be decoupled from views -- the same set of state functions can be represented by a bunch of different views
+* The same type of state object could be constructed in many different ways by many functions --- we are not bound to a single constructor function
+* The same logic function can take different types of state objects, as long as they have some of the same attributes
+
+### Views
+
+A typical view takes state objects as parameters and returns an HTMLElement. Views can also initialize new state objects, pass them down to other views, or even return any extra data along with the DOM nodes. This way, state can easily bubble up and down through your tree of view functions.
+
+#### Mixin views
+
+Often, the user of a view function wants to tweak a bunch of nested markup when they use a component. Instead of having your component construct all the markup itself, it can be easier to have the user create all the markup themselves, while the view function takes the markup as a parameter and uses special `data-bind` attributes to add in functionality.
+
+As long as the source markup has the right `data-bind` attributes, the user can change up their markup however they want.
+
+```js
+// Here, "elem" is a user-supplied element that we are adding counter functionality into
+function counterView (elem, startCount) {
+  const counter = state({count: 1})
+  const incrBtn = elem.querySelector('[data-bind="increment"]')
+  incrBtn.addEventListener('click', () => counter.update({count: counter.count + 1}))
+  const countTxt = elem.querySelector('[data-bind="count"]')
+  counter.on('count', { c => countTxt.textContent = c })
+  return elem
+}
+```
+
+This way, the user can use any of the following "templates" to pass into the `counterView` function:
+
+```html
+<div class='counter1'>
+  <button data-bind='increment'> Increment !!! </button>
+  <p data-bind='count'></p>
+</div>
+
+<div class='counter1'>
+  <div class='col-6'>
+    <div class='xlarge' data-bind='count'></div>
+  </div>
+  <div class='col-6'>
+    <a data-bind='increment'> add 1 </a>
+  </div>
+</div>
+
+<div class='counter3>
+  <button data-bind='increment' data-bind='count'>0</button>
+</div>
+```
+
+### Presentation logic
+
+Sometimes, you want to initialize and control some states, but you are fairly positive the logic doesn't need to be in a module, and doesn't need to be reused anywhere else. These states and code can simply get initialized and live inside your view function. Some examples include:
+* Dropdown open/close state
+* Tab swapping state
+* Activating a sidebar
+* Showing/hiding an input
+
+In these cases, it may be simplest to keep these states hidden inside the view functions where they are needed. As soon as you realize you want to reuse the code elsewhere in your app, you can start to move the logic into their own modules.
 
