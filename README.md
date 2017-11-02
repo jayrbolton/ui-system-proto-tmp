@@ -158,7 +158,7 @@ Set the following in your browser console to enable some debugging messages:
 * `localStorage.debug = "uzu:state"` to show state-related messages
 * `localStorage.debug = "uzu:dom"` to show dom-related messages
 
-# Design patterns
+# Patterns & philosophy
 
 ## Modularity
 
@@ -176,6 +176,10 @@ Data constructors and functions over data can live in their own files and their 
 A typical view takes state objects as parameters and returns an HTMLElement. Views can also initialize new state objects, pass them down to other views, or even return any extra data along with the DOM nodes. This way, state can easily bubble up and down through your tree of view functions.
 
 View functions can use any library they want to generate plain [HTMLElements](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement). `bel` is a good option, but any other library that generates DOM nodes would also work just fine!
+
+### Using other libs
+
+You can freely use a lot of non-uzu libraries without special modifications, such as pell, pikaday, chart.js, etc, etc. As long as the library uses plain html, svg, or canvas, it is fully compatible -- no weird framework lock-in.
 
 #### Mixin views
 
